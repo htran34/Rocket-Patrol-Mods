@@ -1,7 +1,6 @@
 // // import { Phaser } from "../lib/phaser";
 
 // // let game = new Phaser.game()
-// console.log("hello world");
 
 let config = {
     type: Phaser.AUTO,

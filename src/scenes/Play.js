@@ -1,6 +1,10 @@
+// initialize high score
+p1HighScore = 0;
+
+
 class Play extends Phaser.Scene {
     constructor() {
-        super("playScene");
+        super("playScene2");
     }
 
     preload() {
@@ -55,16 +59,50 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
-        
+
+        let highScoreConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+            fixedWidth: 100
+        }  
+        this.highScoreLeft = this.add.text(500, 50, p1HighScore, highScoreConfig);
+
+        let firedConfig = {
+            fontFamily: 'Courier',
+            fontSize: '28px',
+            backgroundColor: '#F3B141',
+            color: '#843605',
+            align: 'right',
+            padding: {
+            top: 5,
+            bottom: 5,
+            },
+            fixedWidth: 100
+        }
+        this.fired = this.add.text(250, 50, "FIRED", firedConfig).setVisible(false);
+
+        this.explosions = ['sfx_explosion', 'sfx_explosion1', 'sfx_explosion2', 'sfx_explosion3', 'sfx_explosion4', 'sfx_explosion5'];
+
         // GAME OVER flag
         this.gameOver = false;
 
         // 60-second play clock
         scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+        this.clock = this.time.delayedCall(10000, () => {
+        //this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
+            // update high score 
+            p1HighScore = Math.max(p1HighScore, this.p1Score);
+            this.highScoreLeft = this.add.text(500, 50, p1HighScore, highScoreConfig);
         }, null, this);
     }
     update() {
@@ -96,6 +134,15 @@ class Play extends Phaser.Scene {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
         }
+        
+
+        // check if rocket is fired
+        if(this.p1Rocket.isFiring && this.p1Rocket.y >= borderUISize * 3 + borderPadding) {
+            this.fired.setVisible(true);
+        }
+        else {
+            this.fired.setVisible(false);
+        }
     }
     checkCollision(rocket, ship) {
         // simple AABB checking
@@ -121,6 +168,6 @@ class Play extends Phaser.Scene {
         });       
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
-        this.sound.play('sfx_explosion');
+        this.sound.play(this.explosions[Math.floor(Math.random() * this.explosions.length)]);
     }      
 }
