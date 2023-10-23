@@ -1,6 +1,6 @@
-// initialize high score
+// initialize high scores
 p1HighScore = 0;
-
+p2HighScore = 0;
 
 class Play extends Phaser.Scene {
     constructor() {
@@ -11,6 +11,7 @@ class Play extends Phaser.Scene {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
+        this.load.image('spaceship2', './assets/spaceship.png');
         this.load.image('starfield', './assets/starfield.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
@@ -59,36 +60,12 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         this.scoreLeft = this.add.text(borderUISize + borderPadding, borderUISize + borderPadding*2, this.p1Score, scoreConfig);
+        this.highScoreLeft = this.add.text(500, 50, p1HighScore, scoreConfig);
+        this.fired = this.add.text(250, 50, "FIRED", scoreConfig).setVisible(false);
+        this.explosions = ['sfx_explosion', 'sfx_explosion2', 'sfx_explosion3', 'sfx_explosion4', 'sfx_explosion5'];
 
-        let highScoreConfig = {
-            fontFamily: 'Courier',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
-            align: 'right',
-            padding: {
-            top: 5,
-            bottom: 5,
-            },
-            fixedWidth: 100
-        }  
-        this.highScoreLeft = this.add.text(500, 50, p1HighScore, highScoreConfig);
-
-        let firedConfig = {
-            fontFamily: 'Courier',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
-            align: 'right',
-            padding: {
-            top: 5,
-            bottom: 5,
-            },
-            fixedWidth: 100
-        }
-        this.fired = this.add.text(250, 50, "FIRED", firedConfig).setVisible(false);
-
-        this.explosions = ['sfx_explosion', 'sfx_explosion1', 'sfx_explosion2', 'sfx_explosion3', 'sfx_explosion4', 'sfx_explosion5'];
+        // initialize timer display
+        this.elapsedLabel = this.add.text(250, 50, 0, scoreConfig).setVisible(false);
 
         // GAME OVER flag
         this.gameOver = false;
@@ -102,10 +79,15 @@ class Play extends Phaser.Scene {
             this.gameOver = true;
             // update high score 
             p1HighScore = Math.max(p1HighScore, this.p1Score);
-            this.highScoreLeft = this.add.text(500, 50, p1HighScore, highScoreConfig);
+            this.highScoreLeft = this.add.text(500, 50, p1HighScore, scoreConfig);
         }, null, this);
     }
     update() {
+        // initialize time elapsed
+        const elapsed = this.clock.getElapsed();
+        this.elapsedLabel.text = elapsed;
+        this.elapsedLabel.setVisible(true);
+
         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
             this.scene.restart();
@@ -134,7 +116,6 @@ class Play extends Phaser.Scene {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
         }
-        
 
         // check if rocket is fired
         if(this.p1Rocket.isFiring && this.p1Rocket.y >= borderUISize * 3 + borderPadding) {
