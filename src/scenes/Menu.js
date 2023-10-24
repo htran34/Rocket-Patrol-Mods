@@ -35,7 +35,6 @@ class Menu extends Phaser.Scene {
         menuConfig.backgroundColor = '#00FF00';
         menuConfig.color = '#000';
         this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press <- for Novice or -> for Expert', menuConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding + 50, 'Press 2 for alternating 2P mode', menuConfig).setOrigin(0.5);
         
         // define keys
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
@@ -46,6 +45,7 @@ class Menu extends Phaser.Scene {
           // easy mode
           game.settings = {
             spaceshipSpeed: 3,
+            spacejetSpeed: 5,
             gameTimer: 60000    
           }
           this.sound.play('sfx_select');
@@ -55,6 +55,7 @@ class Menu extends Phaser.Scene {
           // hard mode
           game.settings = {
             spaceshipSpeed: 4,
+            spacejetSpeed: 6,
             gameTimer: 45000    
           }
           this.sound.play('sfx_select');

@@ -1,6 +1,5 @@
-// initialize high scores
+// initialize high score
 p1HighScore = 0;
-p2HighScore = 0;
 
 class Play extends Phaser.Scene {
     constructor() {
@@ -11,7 +10,7 @@ class Play extends Phaser.Scene {
         // load images/tile sprites
         this.load.image('rocket', './assets/rocket.png');
         this.load.image('spaceship', './assets/spaceship.png');
-        this.load.image('spaceship2', './assets/spaceship.png');
+        this.load.image('spacejet', './assets/spacejet.png');
         this.load.image('starfield', './assets/starfield.png');
         // load spritesheet
         this.load.spritesheet('explosion', './assets/explosion.png', {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 9});
@@ -33,6 +32,8 @@ class Play extends Phaser.Scene {
         this.ship01 = new Spaceship(this, game.config.width + borderUISize*6, borderUISize*4, 'spaceship', 0, 30).setOrigin(0, 0);
         this.ship02 = new Spaceship(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding*2, 'spaceship', 0, 20).setOrigin(0,0);
         this.ship03 = new Spaceship(this, game.config.width, borderUISize*6 + borderPadding*4, 'spaceship', 0, 10).setOrigin(0,0);
+        // add spacejet (x1)
+        this.jet01 = new Spacejet(this, game.config.width + borderUISize*3, borderUISize*5 + borderPadding, 'spacejet', 0, 50).setOrigin(0, 0);
         // define keys
         keyF = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.F);
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -65,15 +66,15 @@ class Play extends Phaser.Scene {
         this.explosions = ['sfx_explosion', 'sfx_explosion2', 'sfx_explosion3', 'sfx_explosion4', 'sfx_explosion5'];
 
         // initialize timer display
-        this.elapsedLabel = this.add.text(250, 50, 0, scoreConfig).setVisible(false);
+        this.timeRemaining = this.add.text(250, 50, 0, scoreConfig).setVisible(false);
 
         // GAME OVER flag
         this.gameOver = false;
 
         // 60-second play clock
         scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(10000, () => {
-        //this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
+        //game.settings.gameTimer = 10000
+        this.clock = this.time.delayedCall(game.settings.gameTimer, () => {
             this.add.text(game.config.width/2, game.config.height/2, 'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + 64, 'Press (R) to Restart', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
@@ -83,10 +84,16 @@ class Play extends Phaser.Scene {
         }, null, this);
     }
     update() {
-        // initialize time elapsed
+        // initialize time elapsed & calculate time remianing
         const elapsed = this.clock.getElapsed();
-        this.elapsedLabel.text = elapsed;
-        this.elapsedLabel.setVisible(true);
+        const remaining = (game.settings.gameTimer - elapsed)/1000;
+        this.timeRemaining.text = Math.round(remaining);
+        this.timeRemaining.setVisible(true);
+
+        // speed increase for rocket after 30 seconds of gameplay
+        if(elapsed >= 30000) {
+            this.p1Rocket.increaseSpeed();
+        }
 
         // check key input for restart
         if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
@@ -101,21 +108,30 @@ class Play extends Phaser.Scene {
             this.ship01.update();           // update spaceships (x3)
             this.ship02.update();
             this.ship03.update();
+            this.jet01.update();
         } 
 
         // check collisions
         if(this.checkCollision(this.p1Rocket, this.ship03)) {
             this.p1Rocket.reset();
-            this.shipExplode(this.ship03);   
+            this.shipExplode(this.ship03);
+            game.settings.gameTimer += 10000;
         }
         if (this.checkCollision(this.p1Rocket, this.ship02)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship02);
+            game.settings.gameTimer += 20000;
         }
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
             this.p1Rocket.reset();
             this.shipExplode(this.ship01);
+            game.settings.gameTimer += 30000;
         }
+        if(this.checkCollision(this.p1Rocket, this.jet01)) {
+            this.p1Rocket.reset();
+            this.shipExplode(this.jet01); 
+            game.settings.gameTimer += 60000;  
+        }       
 
         // check if rocket is fired
         if(this.p1Rocket.isFiring && this.p1Rocket.y >= borderUISize * 3 + borderPadding) {
@@ -152,3 +168,4 @@ class Play extends Phaser.Scene {
         this.sound.play(this.explosions[Math.floor(Math.random() * this.explosions.length)]);
     }      
 }
+
