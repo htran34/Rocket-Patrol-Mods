@@ -1,6 +1,6 @@
 // Hunter Tran
 // Rocket Patrol Unlimited - The Completely Bananas Remix
-// 4 hours approximated time spent 
+// 12 hours approximated time spent 
 // MODS IMPLEMENTED:
 // * Track a high score that persists across scenes and display it in the UI (1)
 // * Implement the 'FIRE' UI text from the original game (1)
