@@ -5,22 +5,16 @@ class Menu extends Phaser.Scene {
 
     preload() {
         // load audio
-        this.load.audio('sfx_select', './assets/blip_select12.wav');
-        this.load.audio('sfx_explosion', './assets/explosion1.wav');
-        this.load.audio('sfx_explosion2', './assets/explosion2.wav');
-        this.load.audio('sfx_explosion3', './assets/explosion3.wav');
-        this.load.audio('sfx_explosion4', './assets/explosion4.wav');
-        this.load.audio('sfx_explosion5', './assets/explosion5.wav');
-        this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
+        this.load.audio('sfx_mario', './assets/marioJump.wav');
     }
 
     create() {
         // menu text configuration
         let menuConfig = {
-            fontFamily: 'Courier',
-            fontSize: '28px',
-            backgroundColor: '#F3B141',
-            color: '#843605',
+            fontFamily: 'Georgia',
+            fontSize: '46px',
+            backgroundColor: '#0',
+            color: '#00ff00',
             align: 'right',
             padding: {
                 top: 5,
@@ -30,36 +24,17 @@ class Menu extends Phaser.Scene {
         }
 
         // show menu text
-        this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 'ROCKET PATROL', menuConfig).setOrigin(0.5);
-        this.add.text(game.config.width/2, game.config.height/2, 'Use <--> arrows to move & (F) to fire', menuConfig).setOrigin(0.5);
-        menuConfig.backgroundColor = '#00FF00';
-        menuConfig.color = '#000';
-        this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 'Press <- for Novice or -> for Expert', menuConfig).setOrigin(0.5);
+        const titleText = this.add.text(130, 50, 'ENDLESS MARIO BROS', menuConfig);
+        const startText = this.add.text(225, 300, 'PRESS SPACE TO START');
+        // TweenHelper.flashElement(this, playText);
+        // menuConfig.backgroundColor = '#00FF00';
+        // menuConfig.color = '#0000';
+        // this.add.text(game.config.width/2, game.config.height/2 + borderUISize, 'Press <- for Novice or -> for Expert', menuConfig).setOrigin(0.5);
         
         // define keys
+        space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
     }
     update() {
-        if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-          // easy mode
-          game.settings = {
-            spaceshipSpeed: 3,
-            spacejetSpeed: 5,
-            gameTimer: 60000    
-          }
-          this.sound.play('sfx_select');
-          this.scene.start('playScene2');    
-        }
-        if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
-          // hard mode
-          game.settings = {
-            spaceshipSpeed: 4,
-            spacejetSpeed: 6,
-            gameTimer: 45000    
-          }
-          this.sound.play('sfx_select');
-          this.scene.start('playScene2');    
-        }
     }
 }
