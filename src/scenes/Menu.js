@@ -6,35 +6,43 @@ class Menu extends Phaser.Scene {
     preload() {
         // load audio
         this.load.audio('sfx_mario', './assets/marioJump.wav');
+        this.load.image('titleBox', './assets/menuTitle.png');
+        this.load.bitmapFont('atari', 'assets/fonts/atari-smooth.png', 'assets/fonts/atari-smooth.xml');
     }
 
     create() {
         // menu text configuration
         let menuConfig = {
-            fontFamily: 'Georgia',
-            fontSize: '46px',
-            backgroundColor: '#0',
-            color: '#00ff00',
-            align: 'right',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 0
+            fontSize: '28px',
+            align: 'center',
+            strokeThickness: 3
         }
 
-        // show menu text
-        const titleText = this.add.text(130, 50, 'ENDLESS MARIO BROS', menuConfig);
-        const startText = this.add.text(225, 300, 'PRESS SPACE TO START');
-        // TweenHelper.flashElement(this, playText);
+        // display various menu elements
+        this.add.rectangle(200, 0, 1000, 1000, 0x63a0fd);   // sets menu background color 
+        this.add.image(320, 100, 'titleBox');               
+        const startText = this.add.text(225, 300, 'PRESS SPACE TO START', menuConfig);
+        // startText.setStroke('#FFFFFF', 3);
+
+        //TweenHelper.flashElement(this, startText);
         // menuConfig.backgroundColor = '#00FF00';
         // menuConfig.color = '#0000';
         // this.add.text(game.config.width/2, game.config.height/2 + borderUISize, 'Press <- for Novice or -> for Expert', menuConfig).setOrigin(0.5);
         
         // define keys
-        space = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
     }
     update() {
+        if (Phaser.Input.Keyboard.JustDown(keySpace)) {
+            game.settings = {
+                //spaceshipSpeed: 3,
+                //spacejetSpeed: 5,
+                
+            }
+            //this.sound.play('sfx_select');
+            /* Play Mario menu button sound here! */
+            this.scene.start('playScene2');    
+          }
     }
 }
+

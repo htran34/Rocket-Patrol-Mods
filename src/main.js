@@ -9,5 +9,4 @@ let config = {
 let game = new Phaser.Game(config);
 
 // reserve keyboard vars
-let keyF, keyR, keyLEFT, keyRIGHT;
-let space;
+let keyF, keyR, keyLEFT, keyRIGHT, keySpace;
